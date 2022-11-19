@@ -1,42 +1,35 @@
 #include "equal-paths.h"
-using namespace std;
-
-
-#include "equal-paths.h"
+#include <iostream>
 using namespace std;
 
 
 // You may add any prototypes of helper functions here
-int findheight(Node* root){
-    if(!root){
-        return 0; 
-    }
-    int lh = findheight(root->left); 
-    //find height of left branch
-    int rh = findheight(root->right); 
-    //find height of right branch 
-    int diff = lh - rh; 
-    //check the difference 
-    if((lh == -1) || (rh == -1)){
-        return -1; 
-    }
-    if(abs(diff) > 1){
-        return -1; 
-    }
-    else{
-        if(lh > rh){
-        return lh + 1; 
-        }
-        else{
-        return rh + 1; 
-    }    
-}
-}
-bool equalPaths(Node * root)
+    
+bool checkUtil(struct Node *root, int level, int *leafLevel)
 {
-    if(findheight(root) == -1){
-        return false;
+    if (!root){
+        return true; 
+    } 
+    if (root->left == NULL && root->right == NULL)
+    {
+        if (*leafLevel == 0)
+        {
+            *leafLevel = level; // Set first found leaf's level
+            return true;
+        }
+ 
+        // If this is not first leaf node, compare
+        // its level with first leaf's level
+        return (level == *leafLevel);
     }
-    return false; 
+ 
+    // If this node is not leaf, recursively
+    // check left and right subtrees
+    return checkUtil(root->left, level + 1, leafLevel) && checkUtil(root->right, level + 1, leafLevel);
 }
 
+bool equalPaths(Node * root)
+{
+    int level = 0, leafLevel = 0;
+    return checkUtil(root, level, &leafLevel);
+}
